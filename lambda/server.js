@@ -1,7 +1,7 @@
 //************************************************************************************************************
 //        PROGRAM:       Math Storm V1.1
 //        TYPE:          Alexa Voice Game (Educational)
-//        AUTHOR:        Xhiwankur
+//        AUTHOR:        Xhiwankur 2019
 //        DESCRIPTION:   Player solves a series of increasingly longer math equations
 //************************************************************************************************************
 
@@ -107,7 +107,7 @@ const AMAZON_HelpIntent_Handler =  {
              say += 'Your last intent was ' + previousIntent + '. ';
          }
 
-        say += ' Here something you can ask me, ' + getSampleUtterance(sampleIntent);
+        say += ' Here is something you can ask me, ' + getSampleUtterance(sampleIntent);
 
         return responseBuilder
             .speak(say)
@@ -150,7 +150,7 @@ const AMAZON_NavigateHomeIntent_Handler =  {
         const responseBuilder = handlerInput.responseBuilder;
         let sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
 
-        let say = 'Hello from AMAZON.NavigateHomeIntent. ';
+        let say = 'Hello this is home ';
 
 
         return responseBuilder
@@ -174,12 +174,9 @@ const AMAZON_YesIntent_Handler =  {
         const responseBuilder = handlerInput.responseBuilder;
         let sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
 
-        let say = '';
         if(shifter){
-
           let say = 'Lets work this out! ' + equate(length);
           shifter = false;
-          foo = true;
 
           return responseBuilder
               .speak(say)
@@ -187,7 +184,6 @@ const AMAZON_YesIntent_Handler =  {
               .getResponse();
         }
         else {
-
           let say = ' Yay! But, what are we celebrating for ? '
 
           return responseBuilder
@@ -245,29 +241,31 @@ const AnswerIntent_Handler =  {
 
         let say = '';
 
-        let slotStatus = '';
         let resolvedSlot;
 
         let slotValues = getSlotValues(request.intent.slots);
 
-        if( foo || !shifter ) {
+        if( play ) {
 
-          shifter = true;
+          if ( shifter ){
+            say += 'Hahaha... very funny, but I asked yes or no ?'
+          }
 
-          if (slotValues.answer.heardAs == ans || slotValues.answer.resolved == ans)
+          else if (slotValues.answer.heardAs == ans || slotValues.answer.resolved == ans)
           {
-            say += ' You nailed it. Lets shred level ' + length + ', yes or no ? ';
+            let i = Math.floor(Math.random()*successText.length)
+            say += successText[i] + length + ', yes or no ? ';
             length++;
+            shifter = true;
           }
-          else if (!shifter)
+          else
           {
-            say += ' Nah, not even close . The answer is ' + ans + ' . Do you want to try again ? Yes or No ?';
+            say += ' Sorry . The answer is ' + ans + ' . Do you want to try again ? Yes or No ?';
+            shifter = true;
           }
 
-
-          say += slotStatus;
         }
-        else {
+        else if ( !play ){
           say += 'please set difficulty first';
         }
 
@@ -292,7 +290,8 @@ const OptionIntent_Handler =  {
         const responseBuilder = handlerInput.responseBuilder;
         let sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
 
-        let say = ' Allright ! it will be a ';
+        let i = Math.floor(Math.random()*optionText.length)
+        let say = optionText[i];
 
         let slotStatus = '';
         let resolvedSlot;
@@ -300,13 +299,12 @@ const OptionIntent_Handler =  {
         let slotValues = getSlotValues(request.intent.slots);
         // getSlotValues returns .heardAs, .resolved, and .isValidated
         if (slotValues.difficulty.heardAs && slotValues.difficulty.heardAs !== '') {
-            slotStatus += slotValues.difficulty.heardAs + ' storm today. ';
+            slotStatus += slotValues.difficulty.heardAs + ' it is ';
         } else {
             slotStatus += 'killer storm today.';
         }
         if (slotValues.difficulty.ERstatus === 'ER_SUCCESS_MATCH') {
-            slotStatus += 'get ready for the showdown.';
-            foo = true;
+            play = true;
         }
         else {
           slotStatus += 'but would you mind repeating once more ?';
@@ -324,7 +322,7 @@ const OptionIntent_Handler =  {
 
         say += slotStatus;
 
-        if(foo)
+        if(play)
         {
           say += equate(length);
         }
@@ -347,21 +345,23 @@ const LaunchRequest_Handler =  {
     },
     handle(handlerInput) {
         const responseBuilder = handlerInput.responseBuilder;
-
         let say = 'Hey! ' + ' Welcome to ' + invocationName + ' ! Please select a difficulty level to begin with.';
 
         let skillTitle = capitalize(invocationName);
 
+        length = 2;
 
         return responseBuilder
             .speak(say)
             .reprompt('try again, ' + say)
-            .withStandardCard('Math Storm',
-              'Hey! Fella \n Lets burn some brains... , ' + skillTitle,
-               welcomeCardImg.smallImageUrl, welcomeCardImg.largeImageUrl)
+            .withSimpleCard(skillTitle, 'A Mental Math Game')
             .getResponse();
     },
 };
+
+//***********************************************************
+//                  SESSION END
+//***********************************************************
 
 const SessionEndedHandler =  {
     canHandle(handlerInput) {
@@ -399,17 +399,28 @@ const ErrorHandler =  {
     //    const myArray  = [ "orange", "grape", "strawberry" ];
     //    const myObject = { "city": "Boston",  "state":"Massachusetts" };
 
-var score = 0;
+//****************************************************************************
+//                        Control Variables
+//****************************************************************************
 var diff = 0;
 var length = 2;
 var ans = 0;
 
-var foo = false;  //
+var play = false;  //
 var shifter = false; // level shifter
+
+//***************************************************************************
+//                     Dialouges
+//***************************************************************************
+var successText = [' Well done ! Lets move on to level ', ' You surely got it ! Ready for level ', ' Smart ! Next level ', ' Awesome ! On to level ', ' Nailed it ! Lets raise the bar to level '];
+
+var optionText = [' Okay, Good choice, ', ' Get Ready,  ', ' Alright ! as good as  '];
+
 
 const APP_ID = undefined;  // TODO replace with your Skill ID (OPTIONAL).
 
 // 3.  Helper Functions ===================================================================
+
 
 function equate(n){
 
@@ -550,23 +561,6 @@ function supportsDisplay(handlerInput) // returns true if the skill is running o
     return hasDisplay;
 }
 
-
-const welcomeCardImg = {
-    smallImageUrl: "https://s3.amazonaws.com/skill-images-789/cards/card_plane720_480.png",
-    largeImageUrl: "https://s3.amazonaws.com/skill-images-789/cards/card_plane1200_800.png"
-
-
-};
-
-const DisplayImg1 = {
-    title: 'Jet Plane',
-    url: 'https://s3.amazonaws.com/skill-images-789/display/plane340_340.png'
-};
-const DisplayImg2 = {
-    title: 'Starry Sky',
-    url: 'https://s3.amazonaws.com/skill-images-789/display/background1024_600.png'
-
-};
 
 function getCustomIntents() {
     const modelIntents = model.interactionModel.languageModel.intents;
@@ -831,97 +825,4 @@ exports.handler = skillBuilder
 
 
 // End of Skill code -------------------------------------------------------------
-// Static Language Model for reference
 
-const model = {
-  "interactionModel": {
-    "languageModel": {
-      "invocationName": "math storm",
-      "intents": [
-        {
-          "name": "AMAZON.FallbackIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.CancelIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.HelpIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.StopIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.NavigateHomeIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.YesIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.NoIntent",
-          "samples": []
-        },
-        {
-          "name": "AnswerIntent",
-          "slots": [
-            {
-              "name": "answer",
-              "type": "AMAZON.NUMBER"
-            }
-          ],
-          "samples": [
-            "is it {answer}",
-            "it is {answer}",
-            "the number is {answer}"
-          ]
-        },
-        {
-          "name": "OptionIntent",
-          "slots": [
-            {
-              "name": "difficulty",
-              "type": "SKILL"
-            }
-          ],
-          "samples": [
-            "play {difficulty}",
-            "be it {difficulty}",
-            "it is {difficulty}",
-            "{difficulty}",
-            "i choose {difficulty}"
-          ]
-        },
-        {
-          "name": "LaunchRequest"
-        }
-      ],
-      "types": [
-        {
-          "name": "SKILL",
-          "values": [
-            {
-              "name": {
-                "value": "easy"
-              }
-            },
-            {
-              "name": {
-                "value": "medium"
-              }
-            },
-            {
-              "name": {
-                "value": "hard"
-              }
-            }
-          ]
-        }
-      ]
-    }
-  }
-};
