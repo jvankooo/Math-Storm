@@ -2,7 +2,7 @@
 
 A Mental Math Game ( Alexa Skill ) - Can your brain withsand the forces of numbers
 
-![Alexa Skill](./img.eps?raw=true)
+![alexa badge](./Alexa.png?raw=true)
 
 Find the skills in your preferred store : 
 
