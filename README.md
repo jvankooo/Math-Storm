@@ -1,6 +1,6 @@
 # Math-Storm [![npm version](https://badge.fury.io/js/node.svg)](https://badge.fury.io/js/node)
 
-A Mental Math Game ( Alexa Skill ) - Can your brain withsand the forces of numbers
+A Mental Math Game ( Alexa Skill ) - Can your brain withstand the forces of numbers
 
 ![alexa badge](./Alexa.png?raw=true)
 
