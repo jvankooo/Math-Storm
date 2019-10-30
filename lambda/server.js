@@ -1,7 +1,7 @@
 //************************************************************************************************************
 //        PROGRAM:       Math Storm V1.1
 //        TYPE:          Alexa Voice Game (Educational)
-//        AUTHOR:        Xhiwankur 2019
+//        AUTHOR:        J Van K 2019
 //        DESCRIPTION:   Player solves a series of increasingly longer math equations
 //************************************************************************************************************
 
