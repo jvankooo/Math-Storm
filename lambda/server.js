@@ -260,7 +260,7 @@ const AnswerIntent_Handler =  {
           }
           else
           {
-            say += ' Sorry . The answer is ' + ans + ' . Do you want to try again ? Yes or No ?';
+            say += ' Sorry . The answer is ' + ans + ' . Lets play again ? Yes or No ?';
             shifter = true;
           }
 
@@ -434,7 +434,7 @@ function equate(n){
     ans += step;
   }
 
-  return out + ' What is the result ? ';
+  return out + ' What will be the result ? ';
 
 }
 
